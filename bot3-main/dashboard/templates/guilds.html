@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Servers{% endblock %}
+{% block breadcrumb %}servers{% endblock %}
+{% block content %}
+<h1>Τα server σου</h1>
+<p class="muted">Server όπου έχεις δικαιώματα διαχείρισης και υπάρχει ήδη το bot.</p>
+{% if guilds %}
+<div style="margin-top:20px;">
+    {% for g in guilds %}
+    <div class="list-row">
+        <span style="font-weight:600;">{{ g.name }}</span>
+        <a class="btn" href="/dashboard/{{ g.id }}">Διαχείριση →</a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="panel"><p class="muted" style="margin:0;">Δεν βρέθηκαν server όπου είσαι admin και το bot είναι ήδη μέλος. Κάνε πρώτα invite το bot στο server σου.</p></div>
+{% endif %}
+{% endblock %}

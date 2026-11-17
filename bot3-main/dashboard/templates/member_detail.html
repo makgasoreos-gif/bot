@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{{ member.display_name }} — {{ guild.name }}{% endblock %}
+{% block breadcrumb %}{{ guild.name }} / members / {{ member.display_name }}{% endblock %}
+{% block sidebar %}
+<div class="nav-group">
+    <a class="nav-link" href="/dashboard"><span class="ico">←</span>Όλα τα servers</a>
+</div>
+<div class="nav-group">
+    <div class="nav-label">{{ guild.name }}</div>
+    <a class="nav-link" href="/dashboard/{{ guild.id }}"><span class="ico">⚙</span>Ρυθμίσεις</a>
+    <a class="nav-link active" href="/dashboard/{{ guild.id }}/members"><span class="ico">◈</span>Members</a>
+    <a class="nav-link" href="/dashboard/{{ guild.id }}/send"><span class="ico">✉</span>Αποστολή μηνύματος</a>
+</div>
+{% endblock %}
+{% block content %}
+<a href="/dashboard/{{ guild.id }}/members" class="mono" style="color:var(--text-muted); text-decoration:none; font-size:13px;">← πίσω στα members</a>
+
+{% if done == "warned" %}<div class="flash" style="margin-top:16px;">Το μέλος ειδοποιήθηκε (warning).</div>{% endif %}
+{% if done == "muted" %}<div class="flash" style="margin-top:16px;">Το μέλος έγινε mute.</div>{% endif %}
+{% if done == "unmuted" %}<div class="flash" style="margin-top:16px;">Το μέλος έγινε unmute.</div>{% endif %}
+{% if done == "warnings_cleared" %}<div class="flash" style="margin-top:16px;">Τα warnings καθαρίστηκαν.</div>{% endif %}
+{% if done == "no_permission" %}<div class="flash flash-danger" style="margin-top:16px;">Το bot δεν έχει δικαίωμα για αυτή την ενέργεια (έλεγξε ιεραρχία ρόλων).</div>{% endif %}
+
+<h1 style="margin-top:18px;">{{ member.display_name }}</h1>
+<p class="mono muted">{{ member }} · {{ member.id }}</p>
+
+<div class="row" style="margin-top:20px;">
+    <div class="panel">
+        <h2>Warn</h2>
+        <form method="post" action="/dashboard/{{ guild.id }}/members/{{ member.id }}/warn">
+            <label>Λόγος</label>
+            <input type="text" name="reason" placeholder="Λόγος προειδοποίησης" required>
+            <button class="btn btn-warn" type="submit" style="margin-top:12px;">Warn</button>
+        </form>
+    </div>
+    <div class="panel">
+        <h2>Mute (timeout)</h2>
+        <form method="post" action="/dashboard/{{ guild.id }}/members/{{ member.id }}/mute">
+            <label>Λεπτά</label>
+            <input type="number" name="minutes" min="1" value="10" required>
+            <label>Λόγος</label>
+            <input type="text" name="reason" placeholder="Λόγος mute" required>
+            <button class="btn btn-warn" type="submit" style="margin-top:12px;">Mute</button>
+        </form>
+        <form method="post" action="/dashboard/{{ guild.id }}/members/{{ member.id }}/unmute" style="margin-top:10px;">
+            <button class="btn btn-secondary" type="submit">Unmute</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="panel">
+        <h2>Kick</h2>
+        <form method="post" action="/dashboard/{{ guild.id }}/members/{{ member.id }}/kick"
+              onsubmit="return confirm('Σίγουρα θες να κάνεις kick αυτό το μέλος;');">
+            <label>Λόγος</label>
+            <input type="text" name="reason" placeholder="Λόγος kick" required>
+            <button class="btn btn-danger" type="submit" style="margin-top:12px;">Kick</button>
+        </form>
+    </div>
+    <div class="panel">
+        <h2>Ban</h2>
+        <form method="post" action="/dashboard/{{ guild.id }}/members/{{ member.id }}/ban"
+              onsubmit="return confirm('Σίγουρα θες να κάνεις ban αυτό το μέλος; Δεν αναιρείται εύκολα.');">
+            <label>Λόγος</label>
+            <input type="text" name="reason" placeholder="Λόγος ban" required>
+            <button class="btn btn-danger" type="submit" style="margin-top:12px;">Ban</button>
+        </form>
+    </div>
+</div>
+
+<div class="panel">
+    <h2>Ιστορικό warnings ({{ warnings|length }})</h2>
+    {% if warnings %}
+    <table>
+        <tr><th>ID</th><th>Ημερομηνία</th><th>Λόγος</th></tr>
+        {% for w in warnings %}
+        <tr><td class="mono">#{{ w.id }}</td><td class="mono">{{ w.created_at }}</td><td>{{ w.reason }}</td></tr>
+        {% endfor %}
+    </table>
+    <form method="post" action="/dashboard/{{ guild.id }}/members/{{ member.id }}/clearwarnings" style="margin-top:14px;">
+        <button class="btn btn-secondary" type="submit">Καθαρισμός όλων των warnings</button>
+    </form>
+    {% else %}
+    <p class="muted" style="margin:0;">Κανένα warning.</p>
+    {% endif %}
+</div>
+{% endblock %}

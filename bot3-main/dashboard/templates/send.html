@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Αποστολή μηνύματος — {{ guild.name }}{% endblock %}
+{% block breadcrumb %}{{ guild.name }} / αποστολή μηνύματος{% endblock %}
+{% block sidebar %}
+<div class="nav-group">
+    <a class="nav-link" href="/dashboard"><span class="ico">←</span>Όλα τα servers</a>
+</div>
+<div class="nav-group">
+    <div class="nav-label">{{ guild.name }}</div>
+    <a class="nav-link" href="/dashboard/{{ guild.id }}"><span class="ico">⚙</span>Ρυθμίσεις</a>
+    <a class="nav-link" href="/dashboard/{{ guild.id }}/members"><span class="ico">◈</span>Members</a>
+    <a class="nav-link active" href="/dashboard/{{ guild.id }}/send"><span class="ico">✉</span>Αποστολή μηνύματος</a>
+</div>
+{% endblock %}
+{% block content %}
+<h1>Αποστολή μηνύματος</h1>
+<p class="muted">Στείλε ένα μήνυμα άμεσα σε οποιοδήποτε κανάλι του server, σαν να το έγραφε το bot.</p>
+
+{% if sent %}<div class="flash">Το μήνυμα στάλθηκε.</div>{% endif %}
+
+<div class="panel" style="max-width:520px;">
+    <form method="post" action="/dashboard/{{ guild.id }}/send">
+        <label>Κανάλι</label>
+        <select name="channel_id" required>
+            {% for c in text_channels %}
+            <option value="{{ c.id }}">#{{ c.name }}</option>
+            {% endfor %}
+        </select>
+        <label>Μήνυμα</label>
+        <textarea name="message" placeholder="Γράψε το μήνυμα..." required></textarea>
+        <button class="btn" type="submit" style="margin-top:16px;">Αποστολή τώρα</button>
+    </form>
+</div>
+{% endblock %}

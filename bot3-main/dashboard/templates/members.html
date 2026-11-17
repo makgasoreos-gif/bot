@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Members — {{ guild.name }}{% endblock %}
+{% block breadcrumb %}{{ guild.name }} / members{% endblock %}
+{% block sidebar %}
+<div class="nav-group">
+    <a class="nav-link" href="/dashboard"><span class="ico">←</span>Όλα τα servers</a>
+</div>
+<div class="nav-group">
+    <div class="nav-label">{{ guild.name }}</div>
+    <a class="nav-link" href="/dashboard/{{ guild.id }}"><span class="ico">⚙</span>Ρυθμίσεις</a>
+    <a class="nav-link active" href="/dashboard/{{ guild.id }}/members"><span class="ico">◈</span>Members</a>
+    <a class="nav-link" href="/dashboard/{{ guild.id }}/send"><span class="ico">✉</span>Αποστολή μηνύματος</a>
+</div>
+{% endblock %}
+{% block content %}
+<h1>Members</h1>
+<p class="muted mono" style="font-size:13px;">{{ total }} μέλη συνολικά (χωρίς bots) — εμφανίζονται έως 50.</p>
+
+<form method="get" action="/dashboard/{{ guild.id }}/members" style="margin: 18px 0 22px;">
+    <input type="text" name="q" placeholder="Αναζήτηση με όνομα..." value="{{ query }}">
+</form>
+
+<div class="panel" style="padding:8px 24px;">
+    <table>
+        <tr><th>Όνομα</th><th>ID</th><th></th></tr>
+        {% for m in members %}
+        <tr>
+            <td>{{ m.display_name }} <span class="mono" style="font-size:12px;">{{ m }}</span></td>
+            <td class="mono">{{ m.id }}</td>
+            <td><a class="btn btn-secondary" style="padding:6px 14px; font-size:13px;" href="/dashboard/{{ guild.id }}/members/{{ m.id }}">Διαχείριση</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
